@@ -18,24 +18,24 @@ class ClientController extends AbstractController
         $this->em = $em;
     }
 
-    #[Route('/clients', name: 'client_list')]
+    #[Route('/', name: 'client_list')]
     public function index(Request $request)
     {
         $clientRepository = $this->em->getRepository(Client::class);
 
-        // Retrieve sorting parameter from the request
-        $sortBy = $request->query->get('sort', 'totalEmailSent');
-        $sortDirection = $request->query->get('direction', 'DESC');
+        $clients = $clientRepository->getList($request);
 
-        // Retrieve filtering params from the request
-        $filterGroup = $request->query->get('group', null);
-        $filterClientId = $request->query->get('client_id', null);
+        $typicalClients = $this->em->getRepository(Client::class)->getTypicalClients();
 
 
-
-        // return $this->render('client/index.html.twig', [
-        //     'clients' => $clients,
-        // ]);
+        return $this->render('Client/index.html.twig', [
+            'clients' => $clients,
+            'sortField' => $request->query->get('sort', 'totalEmailSent'),
+            'sortDirection' => $request->query->get('direction', 'DESC'),
+            'filterCategory' => $request->query->get('category', null),
+            'filterClientId' => $request->query->get('client_id', null),
+            'typicalClients' => $typicalClients
+        ]);
     }
 
 }

@@ -1,3 +1,8 @@
 body {
-    background-color: skyblue;
+font-family: Helvetica;
+}
+
+form {
+    display: flex;
+    gap: 10px;
 }
