@@ -2,50 +2,51 @@
 
 namespace App\Entity;
 
-use App\Repository\ClientStatsRepository;
+use App\Repository\ClientRecordRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ClientStatsRepository::class)]
-#[ORM\Table(name: 'client_stats')]
+#[ORM\Entity(repositoryClass: ClientRecordRepository::class)]
+#[ORM\Table(name: 'client_records')]
 
-class ClientStats
+class ClientRecord
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
+
+    #[ORM\ManyToOne(inversedBy: 'records')]
+    #[ORM\JoinColumn(name: 'client_id', referencedColumnName: 'client_id', nullable: false)]
+    private Client $client;
 
     #[ORM\Column(type: 'integer')]
-    private $clientId;
-
-    #[ORM\Column(type: 'integer')]
-    private $totalSent;
+    private int $totalSent;
 
     #[ORM\Column(type: 'float')]
-    private $openRate;
+    private float $openRate;
 
     #[ORM\Column(type: 'float')]
-    private $unsubscriptionRate;
+    private float $unsubscriptionRate;
 
     #[ORM\Column(type: 'float')]
-    private $bounceRate;
+    private float $bounceRate;
 
     #[ORM\Column(type: 'float')]
-    private $complaintRate;
+    private float $complaintRate;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getClientId(): ?int
+    public function getClient(): Client
     {
-        return $this->clientId;
+        return $this->client;
     }
 
-    public function setClientId(int $clientId): self
+    public function setClient($client): self
     {
-        $this->clientId = $clientId;
+        $this->client = $client;
 
         return $this;
     }
@@ -114,7 +115,7 @@ class ClientStats
     {
         return [
             'id' => $this->getId(),
-            'clientId' => $this->getClientId(),
+            'client' => $this->getClient(),
             'totalSent' => $this->getTotalSent(),
             'openRate' => $this->getOpenRate(),
             'unsubscriptionRate' => $this->getUnsubscriptionRate(),
