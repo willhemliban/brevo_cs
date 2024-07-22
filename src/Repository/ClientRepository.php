@@ -20,6 +20,11 @@ class ClientRepository extends ServiceEntityRepository
         parent::__construct($registry, Client::class);
     }
 
+    /**
+     * Finds the maximum number of email sent by any client.
+     *
+     * @return int The maximum number of email sent.
+     */
     public function findMaxEmailSent(): int
     {
         $qb = $this->createQueryBuilder('client')
@@ -30,7 +35,12 @@ class ClientRepository extends ServiceEntityRepository
         return $qb;
     }
 
-    public function findAllOrderedByEmailsSent()
+    /**
+     * Returns all clients ordered by the total number of emails sent.
+     *
+     * @return array The list of clients ordered by the total number of emails sent.
+     */
+    public function findAllOrderedByEmailsSent(): array
     {
         return $this->createQueryBuilder('client')
             ->orderBy('client.totalEmailSent', 'DESC')
@@ -38,7 +48,13 @@ class ClientRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getList(Request $request)
+    /**
+     * Get the list of clients based on the provided request parameters.
+     *
+     * @param Request $request The request object containing the sorting and filtering parameters.
+     * @return array The list of clients.
+     */
+    public function getList(Request $request): array
     {
         // Retrieve sorting parameter from the request
         $sortBy = $request->query->get('sort', 'totalEmailSent');
@@ -65,10 +81,13 @@ class ClientRepository extends ServiceEntityRepository
         $clients = $queryBuilder->getQuery()->getResult();
 
         return $clients;
-
     }
-
-    public function getTypicalClients()
+    /**
+     * Retrieves the average statistics for typical clients based on their category.
+     *
+     * @return array An array containing the average statistics for typical clients.
+     */
+    public function getTypicalClients(): array
     {
         $category1 = $this->createQueryBuilder('client')
         ->select('AVG(records.totalSent) as avgTotalSent,

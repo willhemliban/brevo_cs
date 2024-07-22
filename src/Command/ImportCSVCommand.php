@@ -9,6 +9,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+/**
+ * This command imports CSV data into the database and scores the clients.
+ * An alternative approach to scoring and categorizing the clients would be to do it on the fly when displaying the list of clients.
+ * I instead chose to do it in this command to avoid having to calculate the score and category each time the list of clients is displayed.
+ */
 class ImportCSVCommand extends Command
 {
     protected static $defaultName = 'app:import-csv-data';
@@ -121,6 +126,12 @@ class ImportCSVCommand extends Command
         return Command::SUCCESS;
     }
 
+    /**
+     * Calculates the score for a given client based on their records.
+     *
+     * @param Client $client The client for which to calculate the score.
+     * @return int The calculated score for the client.
+     */
     private function calculateScore(Client $client): int
     {
         $score = 0;
@@ -146,7 +157,7 @@ class ImportCSVCommand extends Command
         $complaintRate = $complaintRate / count($records);
 
         // the lower the better for these rates so we need to invert them
-        // to increase the diffences between the scores we square the rates
+        // to increase the differences between the scores we square the rates
         $unsubscriptionRate = (1-($unsubscriptionRate/100)) ** 2 * 100;
         $bounceRate = (1-($bounceRate/100)) ** 2 * 100;
         $complaintRate = (1-($complaintRate/100)) ** 2 * 100;
@@ -164,6 +175,10 @@ class ImportCSVCommand extends Command
         return $score;
     }
 
+    /**
+     * Categorizes clients based on the number of emails they have sent.
+     * The clients are split into 3 categories with an equal amount of emails sent.
+     */
     public function categorizeClients(): void
     {
         $clientRepository = $this->em->getRepository(Client::class);
