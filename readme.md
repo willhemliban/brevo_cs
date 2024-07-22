@@ -20,6 +20,8 @@ This is a simple symfony project that loads a csv into a psql database, scores t
 
 6. Set up the database
 ```php bin/console doctrine:database:create```
+alternatively there is also a dump of the database in database/dump.sql
+
 - run the command to transfer the data from the csv to the db
 ```php bin/console app:import-csv-data```
 
